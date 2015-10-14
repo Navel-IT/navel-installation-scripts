@@ -30,6 +30,13 @@ supported_os=(
     'debian8'
 )
 
+# disabled steps
+
+disable_install_step[6]=1
+
+disable_install_step[13]=1
+disable_install_step[14]=1
+
 #-> functions
 
 # usage
@@ -38,10 +45,14 @@ f_usage() {
     ${ECHO} 'Usage:'
     ${ECHO} -e "    ${0} [<options>]\n"
     ${ECHO} 'Options:'
-    ${ECHO} "    -b <git branch>"
-    ${ECHO} '    [-t <git tag>]'
-    ${ECHO} "    [-x <directory of the ${program_name} binary program>]"
-    ${ECHO} '    [-c (copy defaults configuration files)]'
+    ${ECHO} "    -b <BRANCH>"
+    ${ECHO} -e "        Install products from git BRANCH\n"
+    ${ECHO} "    [-x <DIRECTORY>]"
+    ${ECHO} -e "        DIRECTORY of the ${program_name} binary\n"
+    ${ECHO} '    [-1]'
+    ${ECHO} -e "        Copy default configuration files\n"
+    ${ECHO} '    [-2]'
+    ${ECHO} -e "        Install logrotate and configure it for ${program_name} logs\n"
 
     exit ${1}
 }
@@ -63,6 +74,7 @@ _f_define() {
     MKDIR='mkdir'
     CHMOD='chmod'
     CHOWN='chown'
+    SYSTEMCTL='systemctl'
 
     navel_scheduler_git_repo='https://github.com/navel-it/navel-scheduler.git'
 
@@ -73,7 +85,7 @@ _f_define() {
     program_run_directory="/var/run/${program_name}/"
     program_log_directory="/var/log/${program_name}/"
 
-    default_program_binary_directory="/usr/local/bin/${program_name}/"
+    default_program_binary_directory="/usr/local/bin/"
 
     template_directory="${full_dirname}/template/${program_name}"
 
@@ -86,19 +98,22 @@ _f_define() {
     program_service_unit_source_directory="${program_service_source_directory}/unit/"
 
     if c_os_support_systemd ; then
-        program_service_unit_source_file="${program_service_unit_source_directory}/systemV/${program_name}"
-        program_service_unit_destination_file="/etc/init.d/${program_name}"
-    else
         program_service_unit_source_file="${program_service_unit_source_directory}/systemd/${program_name}.service"
         program_service_unit_destination_file="/etc/systemd/system/${program_name}.service"
+    else
+        program_service_unit_source_file="${program_service_unit_source_directory}/systemV/${program_name}"
+        program_service_unit_destination_file="/etc/init.d/${program_name}"
     fi
+
+    program_logrotate_source="${template_directory}/logrotate/${program_name}"
+    program_logrotate_destination="/etc/logrotate.d/${program_name}"
 
     # installation steps
 
     f_install_step_1() {
-        f_do "Installing packages ${pkg_to_install_via_pkg_manager[@]} via package manager."
+        f_do "Installing packages ${mandatory_pkg_to_install_via_pkg_manager[@]} via package manager."
 
-        w_install_pkg ${pkg_to_install_via_pkg_manager[@]}
+        w_install_pkg ${mandatory_pkg_to_install_via_pkg_manager[@]}
     }
 
     f_install_step_2() {
@@ -144,49 +159,49 @@ _f_define() {
 
         [[ -z "${program_binary_directory}" ]] && program_binary_directory="${default_program_binary_directory}"
 
-        f_do "Copying default scripts from ${from} to ${to}."
+        f_do "Copying default script from ${from} to ${to}."
 
         w_cp "${from}" "${to}"
     }
 
     f_install_step_9() {
-        local program_service_default_destination_file="${program_service_default_destination_directory}/${program_name}"
-
-        f_do "Fixing ${program_service_default_destination_file}."
-
-        ${PERL} -p -i -e "s':DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_default_destination_file}" && \
-        ${PERL} -p -i -e "s':BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_default_destination_file}"
-    }
-
-    f_install_step_10() {
         f_do "Copying unit file from ${program_service_unit_source_file} to ${program_service_unit_destination_file}."
 
         w_cp "${program_service_unit_source_file}" "${program_service_unit_destination_file}"
     }
 
-    f_install_step_11() {
+    f_install_step_10() {
         f_do "Fixing ${program_service_unit_destination_file}."
 
         ${PERL} -p -i -e "s':DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -p -i -e "s':BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}"
     }
 
-    f_install_step_12() {
+    f_install_step_11() {
         f_do "Configuring service ${program_name} to start at boot."
 
         w_enable_service_to_start_at_boot "${program_name}"
     }
 
-    f_install_step_13() {
+    f_install_step_12() {
         local program_binary_path="${program_binary_directory}/${program_name}"
 
-        f_do "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${others_files_configuration_directory}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
+        f_do "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
 
-        w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${others_files_configuration_directory}" "${program_run_directory}" "${program_log_directory}"
+        w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
     }
 
-    # f_install_step_14() { # logrotate
-    # }
+    f_install_step_13() {
+        f_do "Installing logrotate."
+
+        w_install_pkg 'logrotate'
+    }
+
+    f_install_step_14() {
+        f_do "Copying logrotate file from ${program_logrotate_source} to ${program_logrotate_destination}."
+
+        w_cp "${program_logrotate_source}" "${program_logrotate_destination}"
+    }
 }
 
 _f_define_for_rhel() {
@@ -195,13 +210,13 @@ _f_define_for_rhel() {
     # set
 
     YUM='yum'
+    CHKCONFIG='chkconfig'
 
-    pkg_to_install_via_pkg_manager=(
+    mandatory_pkg_to_install_via_pkg_manager=(
         'curl'
         'gcc'
         'libxml2'
         'libxml2-devel'
-        # 'logrotate'
     )
 
     program_service_default_destination_directory='/etc/sysconfig/'
@@ -213,13 +228,13 @@ _f_define_for_debian() {
     # set
 
     APT_GET='apt-get'
+    UPDATE_RC_D='update-rc.d'
 
-    pkg_to_install_via_pkg_manager=(
+    mandatory_pkg_to_install_via_pkg_manager=(
         'curl'
         'gcc'
         'libxml2'
         'libxml2-dev'
-        # 'logrotate'
     )
 
     program_service_default_destination_directory='/etc/default/'
@@ -301,7 +316,7 @@ w_chown() {
 
 #-> check opts
 
-while getopts 'b:v:x:c' OPT 2>/dev/null ; do
+while getopts 'b:v:x:12' OPT 2>/dev/null ; do
     case ${OPT} in
         b)
             git_branch=${OPTARG} ;;
@@ -309,8 +324,10 @@ while getopts 'b:v:x:c' OPT 2>/dev/null ; do
             git_tag=${OPTARG} ;; # not in use
         x)
             program_binary_directory=${OPTARG} ;;
-        c)
+        1)
             unset disable_install_step[6] ;;
+        2)
+            unset disable_install_step[13] disable_install_step[14] ;;
         *)
             f_usage 1 ;;
     esac

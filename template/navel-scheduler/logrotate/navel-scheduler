@@ -1,0 +1,8 @@
+/var/log/navel-scheduler/navel-scheduler.log {
+    size 100M
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    missingok
+}

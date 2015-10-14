@@ -79,7 +79,7 @@ f_start_install() {
     done
 
     if [[ -n ${os} ]] ; then
-        f_do "Installing ${program_name}."
+        f_do "Installing ${program_name} (os=${os})."
 
         local step_number=1 RETVAL
 
