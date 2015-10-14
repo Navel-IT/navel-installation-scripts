@@ -35,8 +35,9 @@ supported_os=(
 # usage
 
 f_usage() {
-    ${ECHO} "${0} [<options>]\n"
-    ${ECHO} 'OPTIONS:'
+    ${ECHO} 'Usage:'
+    ${ECHO} -e "    ${0} [<options>]\n"
+    ${ECHO} 'Options:'
     ${ECHO} "    -b <git branch>"
     ${ECHO} '    [-t <git tag>]'
     ${ECHO} "    [-x <directory of the ${program_name} binary program>]"
@@ -81,13 +82,14 @@ _f_define() {
 
     program_service_source_directory="${template_directory}/service/"
 
-    program_service_default_source_directory="${template_directory}/default/"
+    program_service_default_source_directory="${program_service_source_directory}/default/"
+    program_service_unit_source_directory="${program_service_source_directory}/unit/"
 
     if c_os_support_systemd ; then
-        program_service_unit_source_file="${template_directory}/systemV/${program_name}"
+        program_service_unit_source_file="${program_service_unit_source_directory}/systemV/${program_name}"
         program_service_unit_destination_file="/etc/init.d/${program_name}"
     else
-        program_service_unit_source_file="${template_directory}/systemd/${program_name}.service"
+        program_service_unit_source_file="${program_service_unit_source_directory}/systemd/${program_name}.service"
         program_service_unit_destination_file="/etc/systemd/system/${program_name}.service"
     fi
 
@@ -183,8 +185,8 @@ _f_define() {
         w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${others_files_configuration_directory}" "${program_run_directory}" "${program_log_directory}"
     }
 
-    f_install_step_14() { # logrotate
-    }
+    # f_install_step_14() { # logrotate
+    # }
 }
 
 _f_define_for_rhel() {
@@ -250,7 +252,7 @@ w_match() {
 w_install_pkg() {
     if c_os_is_rhel6 || c_os_is_rhel7 ; then
         ${YUM} -y install ${@}
-    else c_os_is_debian7 || c_os_is_debian8 ; then
+    elif c_os_is_debian7 || c_os_is_debian8 ; then
         ${APT_GET} -y install ${@}
     fi
 }
