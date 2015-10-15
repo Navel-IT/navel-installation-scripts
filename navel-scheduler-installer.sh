@@ -5,9 +5,10 @@
 
 #-> set
 
-ECHO='echo'
 DIRNAME='dirname'
 READLINK='readlink'
+ECHO='echo'
+PRINTF='printf'
 
 #-> where am i ?
 
@@ -53,6 +54,8 @@ f_usage() {
     ${ECHO} -e "        Copy default configuration files\n"
     ${ECHO} '    [-2]'
     ${ECHO} -e "        Install logrotate and configure it for ${program_name} logs\n"
+    ${ECHO} '    [-l]'
+    ${ECHO} -e "        Return the list of supported operating systems\n"
 
     exit ${1}
 }
@@ -316,7 +319,7 @@ w_chown() {
 
 #-> check opts
 
-while getopts 'b:v:x:12' OPT 2>/dev/null ; do
+while getopts 'b:v:x:12l' OPT 2>/dev/null ; do
     case ${OPT} in
         b)
             git_branch=${OPTARG} ;;
@@ -328,6 +331,12 @@ while getopts 'b:v:x:12' OPT 2>/dev/null ; do
             unset disable_install_step[6] ;;
         2)
             unset disable_install_step[13] disable_install_step[14] ;;
+        l)
+            ${PRINTF} '%s\n' "${supported_os[@]}"
+
+            exit 0
+
+            ;;
         *)
             f_usage 1 ;;
     esac
