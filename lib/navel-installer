@@ -68,7 +68,7 @@ c_os_is_debian8() {
 f_start_install() {
     local t_os os
 
-    for t_os in ${supported_os[@]} ; do
+    for t_os in "${supported_os[@]}" ; do
         if eval "c_os_is_${t_os}" ; then
             os="${t_os}"
 
@@ -78,7 +78,7 @@ f_start_install() {
         fi
     done
 
-    if [[ -n ${os} ]] ; then
+    if [[ -n "${os}" ]] ; then
         f_do "Installing ${program_name} (os=${os})."
 
         local step_number=1 RETVAL

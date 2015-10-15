@@ -44,10 +44,8 @@ disable_install_step[14]=1
 
 f_usage() {
     ${ECHO} 'Usage:'
-    ${ECHO} -e "    ${0} [<options>]\n"
+    ${ECHO} -e "    ${0} [<options>] <git-branch>\n"
     ${ECHO} 'Options:'
-    ${ECHO} "    -b <BRANCH>"
-    ${ECHO} -e "        Install products from git BRANCH\n"
     ${ECHO} "    [-x <DIRECTORY>]"
     ${ECHO} -e "        DIRECTORY of the ${program_name} binary\n"
     ${ECHO} '    [-1]'
@@ -116,7 +114,7 @@ _f_define() {
     f_install_step_1() {
         f_do "Installing packages ${mandatory_pkg_to_install_via_pkg_manager[@]} via package manager."
 
-        w_install_pkg ${mandatory_pkg_to_install_via_pkg_manager[@]}
+        w_install_pkg "${mandatory_pkg_to_install_via_pkg_manager[@]}"
     }
 
     f_install_step_2() {
@@ -269,9 +267,9 @@ w_match() {
 
 w_install_pkg() {
     if c_os_is_rhel6 || c_os_is_rhel7 ; then
-        ${YUM} -y install ${@}
+        ${YUM} -y install "${@}"
     elif c_os_is_debian7 || c_os_is_debian8 ; then
-        ${APT_GET} -y install ${@}
+        ${APT_GET} -y install "${@}"
     fi
 }
 
@@ -284,13 +282,13 @@ w_groupadd() {
 }
 
 w_cp() {
-    ${CP} -r ${@}
+    ${CP} -r "${@}"
 }
 
 w_mkdir() {
     local fails=0 directory
 
-    for directory in ${@} ; do
+    for directory in "${@}" ; do
         ( [[ -d "${directory}" ]] || ${MKDIR} -p "${directory}" ) || let fails++
     done
 
@@ -298,7 +296,7 @@ w_mkdir() {
 }
 
 w_chmod() {
-    ${CHMOD} ${@}
+    ${CHMOD} "${@}"
 }
 
 w_enable_service_to_start_at_boot() {
@@ -314,15 +312,13 @@ w_enable_service_to_start_at_boot() {
 }
 
 w_chown() {
-    ${CHOWN} ${@}
+    ${CHOWN} "${@}"
 }
 
 #-> check opts
 
-while getopts 'b:v:x:12l' OPT 2>/dev/null ; do
+while getopts 'v:x:12l' OPT 2>/dev/null ; do
     case ${OPT} in
-        b)
-            git_branch=${OPTARG} ;;
         t)
             git_tag=${OPTARG} ;; # not in use
         x)
@@ -341,6 +337,8 @@ while getopts 'b:v:x:12l' OPT 2>/dev/null ; do
             f_usage 1 ;;
     esac
 done
+
+git_branch="${@: -1}"
 
 ( # w_match "${git_tag}" "${navel_git_repo_tag_regex}"
     w_match "${git_branch}" "${navel_git_repo_branch_regex}"
