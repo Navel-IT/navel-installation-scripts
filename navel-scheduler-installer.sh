@@ -142,11 +142,11 @@ _f_define() {
     }
 
     f_install_step_6() {
-        local from="${program_configuration_source_directory}/*" to="/${program_configuration_destination_directory}"
+        local from="${program_configuration_source_directory}/."
 
-        f_do "Copying configuration files from ${from} to ${to}."
+        f_do "Copying configuration files from ${from} to ${program_configuration_destination_directory}."
 
-        w_cp "${from}" "${to}"
+        w_cp -R "${from}" "${program_configuration_destination_directory}"
     }
 
     f_install_step_7() {
