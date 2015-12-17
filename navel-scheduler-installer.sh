@@ -124,9 +124,9 @@ _f_define() {
     }
 
     f_install_step_3() {
-        f_do "Installing ${navel_base_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
+        f_do "Installing ${navel_base_git_repo}@${git_branch}, ${navel_api_blueprints_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
 
-        ${CPANM} "${navel_base_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        ${CPANM} "${navel_base_git_repo}@${git_branch}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
     }
 
     f_install_step_4() {

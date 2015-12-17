@@ -14,6 +14,7 @@ cpanminus_url='http://cpanmin.us'
 cpanminus_module='App::cpanminus'
 
 navel_base_git_repo='https://github.com/navel-it/navel-base.git'
+navel_api_blueprints_git_repo='https://github.com/navel-it/navel-api-blueprints.git'
 
 disable_install_step=()
 
