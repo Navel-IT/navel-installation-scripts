@@ -172,8 +172,6 @@ _f_define() {
     f_install_step_8() {
         local from="${program_service_default_source_directory}/${program_name}"
 
-        [[ -z "${program_binary_directory}" ]] && program_binary_directory="${program_binary_directory}"
-
         f_pending "Copying default script from ${from} to ${program_service_default_destination_file}."
 
         w_cp "${from}" "${program_service_default_destination_file}"
@@ -196,7 +194,9 @@ _f_define() {
     f_install_step_11() {
         f_pending "Templating ${program_service_unit_destination_file}."
 
-        program_binary_path="${program_binary_directory}/${program_name}"
+        [[ -n "${override_program_binary_directory}" ]] && program_binary_directory="${override_program_binary_directory}"
+
+        program_binary_file="${program_binary_directory}/${program_name}"
 
         ${PERL} -pi -e "s':PROGRAM_NAME:'${program_name}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -pi -e "s':PROGRAM_USER:'${program_user}'g" "${program_service_unit_destination_file}" && \
@@ -204,7 +204,7 @@ _f_define() {
         ${PERL} -pi -e "s':PROGRAM_DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -pi -e "s':PROGRAM_DEFAULT_FILE:'${program_service_default_destination_file}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -pi -e "s':PROGRAM_BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_BINARY_FILE:'${program_binary_path}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_BINARY_FILE:'${program_binary_file}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -pi -e "s':RUN_DIR:'${run_directory}'g" "${program_service_unit_destination_file}"
         ${PERL} -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_unit_destination_file}"
     }
@@ -216,9 +216,9 @@ _f_define() {
     }
 
     f_install_step_13() {
-        f_pending "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
+        f_pending "Chowning directories and files (${program_binary_file}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
 
-        w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
+        w_chown -R "${program_user}:${program_group}" "${program_binary_file}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
     }
 
     f_install_step_14() {
@@ -361,7 +361,7 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
         # t)
             # git_tag=${OPTARG} ;;
         x)
-            program_binary_directory=${OPTARG} ;;
+            override_program_binary_directory=${OPTARG} ;;
         1)
             disable_install_step[2]=1 ;;
         2)
