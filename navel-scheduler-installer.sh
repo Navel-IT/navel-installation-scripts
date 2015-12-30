@@ -20,7 +20,7 @@ full_dirname=$(${READLINK} -f ${dirname})
 . "${full_dirname}/lib/navel-installer"
 
 navel_git_repo_branch_regex='^(master|devel)$'
-navel_git_repo_tag_regex='^[0-9]+\.[0-9]+$'
+# navel_git_repo_tag_regex='^[0-9]+\.[0-9]+$'
 
 program_name='navel-scheduler'
 
@@ -52,6 +52,8 @@ f_usage() {
     ${ECHO} -e "        Copy default configuration files\n"
     ${ECHO} '    [-2]'
     ${ECHO} -e "        Install logrotate and configure it for ${program_name} logs\n"
+    ${ECHO} '    [-X]'
+    ${ECHO} -e "        Install ${program_name} with optional modules (improve performance)\n"
     ${ECHO} '    [-l]'
     ${ECHO} -e "        Return the list of supported operating systems\n"
 
@@ -112,31 +114,31 @@ _f_define() {
     # installation steps
 
     f_install_step_1() {
-        f_do "Installing packages ${mandatory_pkg_to_install_via_pkg_manager[@]} via package manager."
+        f_pending "Installing packages ${mandatory_pkg_to_install_via_pkg_manager[@]} via package manager."
 
         w_install_pkg "${mandatory_pkg_to_install_via_pkg_manager[@]}"
     }
 
     f_install_step_2() {
-        f_do "Installing ${cpanminus_module} via ${CURL}."
+        f_pending "Installing ${cpanminus_module} via ${CURL}."
 
         ${CURL} -L "${cpanminus_url}" | ${PERL} - "${cpanminus_module}"
     }
 
     f_install_step_3() {
-        f_do "Installing ${navel_base_git_repo}@${git_branch}, ${navel_api_blueprints_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
+        f_pending "Installing ${navel_base_git_repo}@${git_branch}, ${navel_api_blueprints_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
 
-        ${CPANM} "${navel_base_git_repo}@${git_branch}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        ${CPANM} "${optionnal_modules[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
     }
 
     f_install_step_4() {
-        f_do "Creating group ${program_group}."
+        f_pending "Creating group ${program_group}."
 
         w_groupadd "${program_group}"
     }
 
     f_install_step_5() {
-        f_do "Creating user ${program_user} with home directory ${program_home_directory}."
+        f_pending "Creating user ${program_user} with home directory ${program_home_directory}."
 
         w_useradd "${program_user}" "${program_group}" "${program_home_directory}"
     }
@@ -144,13 +146,13 @@ _f_define() {
     f_install_step_6() {
         local from="${program_configuration_source_directory}/."
 
-        f_do "Copying configuration files from ${from} to ${program_configuration_destination_directory}."
+        f_pending "Copying configuration files from ${from} to ${program_configuration_destination_directory}."
 
         w_cp -R "${from}" "${program_configuration_destination_directory}"
     }
 
     f_install_step_7() {
-        f_do "Creating directories ${program_run_directory} and ${program_log_directory}."
+        f_pending "Creating directories ${program_run_directory} and ${program_log_directory}."
 
         w_mkdir "${program_run_directory}" "${program_log_directory}"
     }
@@ -160,26 +162,26 @@ _f_define() {
 
         [[ -z "${program_binary_directory}" ]] && program_binary_directory="${default_program_binary_directory}"
 
-        f_do "Copying default script from ${from} to ${to}."
+        f_pending "Copying default script from ${from} to ${to}."
 
         w_cp "${from}" "${to}"
     }
 
     f_install_step_9() {
-        f_do "Copying unit file from ${program_service_unit_source_file} to ${program_service_unit_destination_file}."
+        f_pending "Copying unit file from ${program_service_unit_source_file} to ${program_service_unit_destination_file}."
 
         w_cp "${program_service_unit_source_file}" "${program_service_unit_destination_file}"
     }
 
     f_install_step_10() {
-        f_do "Fixing ${program_service_unit_destination_file}."
+        f_pending "Fixing ${program_service_unit_destination_file}."
 
         ${PERL} -p -i -e "s':DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -p -i -e "s':BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}"
     }
 
     f_install_step_11() {
-        f_do "Configuring service ${program_name} to start at boot."
+        f_pending "Configuring service ${program_name} to start at boot."
 
         w_enable_service_to_start_at_boot "${program_name}"
     }
@@ -187,19 +189,19 @@ _f_define() {
     f_install_step_12() {
         local program_binary_path="${program_binary_directory}/${program_name}"
 
-        f_do "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
+        f_pending "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
 
         w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
     }
 
     f_install_step_13() {
-        f_do "Installing logrotate."
+        f_pending "Installing logrotate."
 
         w_install_pkg 'logrotate'
     }
 
     f_install_step_14() {
-        f_do "Copying logrotate file from ${program_logrotate_source} to ${program_logrotate_destination}."
+        f_pending "Copying logrotate file from ${program_logrotate_source} to ${program_logrotate_destination}."
 
         w_cp "${program_logrotate_source}" "${program_logrotate_destination}"
     }
@@ -317,16 +319,19 @@ w_chown() {
 
 #-> check opts
 
-while getopts 'v:x:12l' OPT 2>/dev/null ; do
+while getopts 'v:x:12Xl' OPT 2>/dev/null ; do
     case ${OPT} in
-        t)
-            git_tag=${OPTARG} ;; # not in use
+        # t)
+            # git_tag=${OPTARG} ;;
         x)
             program_binary_directory=${OPTARG} ;;
         1)
             unset disable_install_step[6] ;;
         2)
             unset disable_install_step[13] disable_install_step[14] ;;
+        X)
+            optionnal_modules[0]='JSON::XS'
+            optionnal_modules[1]='MojoX::JSON::XS'
         l)
             ${PRINTF} '%s\n' "${supported_os[@]}"
 
