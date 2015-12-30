@@ -329,9 +329,9 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
             program_binary_directory=${OPTARG} ;;
         1)
             disable_install_step[2]=1 ;;
-        3)
+        2)
             unset disable_install_step[6] ;;
-        4)
+        3)
             unset disable_install_step[13] disable_install_step[14] ;;
         X)
             optionnal_modules[0]='JSON::XS'
