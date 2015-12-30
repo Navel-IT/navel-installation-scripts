@@ -1,4 +1,4 @@
-:LOG_FILE: {
+:PROGRAM_LOG_FILE: {
     size 100M
     rotate 30
     compress

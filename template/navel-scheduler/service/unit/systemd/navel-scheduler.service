@@ -1,14 +1,14 @@
 [Unit]
-Description=navel-scheduler
+Description=:PROGRAM_NAME:
 After=network.target
 
 [Service]
 Type=forking
-User=navel-scheduler
-Group=navel-scheduler
-EnvironmentFile=:DEFAULT_DIR:/navel-scheduler
-ExecStart=:BINARY_BASEDIR:/navel-scheduler --daemonize $OPTS
-PIDFile=/var/run/navel-scheduler/navel-scheduler.pid
+User=:PROGRAM_USER:
+Group=:PROGRAM_GROUP:
+EnvironmentFile=:PROGRAM_DEFAULT_FILE:
+ExecStart=:PROGRAM_BINARY_FILE: --daemonize $OPTS
+PIDFile=:PROGRAM_RUN_FILE:
 
 [Install]
 WantedBy=multi-user.target

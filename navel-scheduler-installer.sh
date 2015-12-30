@@ -82,28 +82,32 @@ _f_define() {
     CHOWN='chown'
     SYSTEMCTL='systemctl'
 
+    configuration_directory='/usr/local/etc/'
+    run_directory="/var/run/"
+    log_directory="/var/log/"
+
     navel_scheduler_git_repo='https://github.com/navel-it/navel-scheduler.git'
 
     program_user='navel-scheduler'
     program_group='navel-scheduler'
 
-    program_home_directory="/usr/local/etc/${program_name}/"
-    program_run_directory="/var/run/${program_name}/"
-    program_log_directory="/var/log/${program_name}/"
+    program_home_directory="${configuration_directory}/${program_name}/"
+    program_run_directory="${run_directory}/${program_name}/"
+    program_log_directory="${log_directory}/${program_name}/"
 
     program_run_file="${program_run_directory}/${program_name}.pid"
     program_log_file="${program_log_directory}/${program_name}.log"
 
-    default_program_binary_directory="/usr/local/bin/"
+    program_binary_directory="/usr/local/bin/"
 
-    template_directory="${full_dirname}/template/${program_name}"
+    program_template_source_directory="${full_dirname}/template/${program_name}"
 
-    program_configuration_source_directory="${template_directory}/configuration/"
+    program_configuration_source_directory="${program_template_source_directory}/configuration/"
     program_configuration_destination_directory="${program_home_directory}"
 
     program_configuration_destination_main_file="${program_configuration_destination_directory}/main.json"
 
-    program_service_source_directory="${template_directory}/service/"
+    program_service_source_directory="${program_template_source_directory}/service/"
 
     program_service_default_source_directory="${program_service_source_directory}/default/"
     program_service_unit_source_directory="${program_service_source_directory}/unit/"
@@ -116,7 +120,7 @@ _f_define() {
         program_service_unit_destination_file="/etc/init.d/${program_name}"
     fi
 
-    program_logrotate_source="${template_directory}/logrotate/${program_name}"
+    program_logrotate_source="${program_template_source_directory}/logrotate/${program_name}"
     program_logrotate_destination="/etc/logrotate.d/${program_name}"
 
     # installation steps
@@ -168,7 +172,7 @@ _f_define() {
     f_install_step_8() {
         local from="${program_service_default_source_directory}/${program_name}"
 
-        [[ -z "${program_binary_directory}" ]] && program_binary_directory="${default_program_binary_directory}"
+        [[ -z "${program_binary_directory}" ]] && program_binary_directory="${program_binary_directory}"
 
         f_pending "Copying default script from ${from} to ${program_service_default_destination_file}."
 
@@ -178,9 +182,9 @@ _f_define() {
     f_install_step_9() {
         f_pending "Templating ${program_service_default_destination_file}."
 
-        ${PERL} -p -i -e "s':RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
-        ${PERL} -p -i -e "s':LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
-        ${PERL} -p -i -e "s':MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
+        ${PERL} -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
     }
 
     f_install_step_10() {
@@ -192,8 +196,17 @@ _f_define() {
     f_install_step_11() {
         f_pending "Templating ${program_service_unit_destination_file}."
 
-        ${PERL} -p -i -e "s':DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -p -i -e "s':BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}"
+        program_binary_path="${program_binary_directory}/${program_name}"
+
+        ${PERL} -pi -e "s':PROGRAM_NAME:'${program_name}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_USER:'${program_user}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_GROUP:'${program_group}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_DEFAULT_FILE:'${program_service_default_destination_file}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':PROGRAM_BINARY_FILE:'${program_binary_path}'g" "${program_service_unit_destination_file}" && \
+        ${PERL} -pi -e "s':RUN_DIR:'${run_directory}'g" "${program_service_unit_destination_file}"
+        ${PERL} -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_unit_destination_file}"
     }
 
     f_install_step_12() {
@@ -203,8 +216,6 @@ _f_define() {
     }
 
     f_install_step_13() {
-        local program_binary_path="${program_binary_directory}/${program_name}"
-
         f_pending "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
 
         w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
@@ -225,7 +236,7 @@ _f_define() {
     f_install_step_16() {
         f_pending "Templating ${program_logrotate_destination}."
 
-        ${PERL} -p -i -e "s':LOG_FILE:'${program_log_file}'g" "${program_logrotate_destination}"
+        ${PERL} -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_logrotate_destination}"
     }
 }
 

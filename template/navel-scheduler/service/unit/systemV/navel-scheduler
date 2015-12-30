@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 # Copyright 2015 Navel-IT
-# navel-scheduler is developed by Yoann Le Garff, Nicolas Boquet and Yann Le Bras under GNU GPL v3
+# :PROGRAM_NAME: is developed by Yoann Le Garff, Nicolas Boquet and Yann Le Bras under GNU GPL v3
 #
 # chkconfig: - 98 02
+# description: :PROGRAM_NAME:
+
+### BEGIN INIT INFO
+# Provides: :PROGRAM_NAME:
+# Required-Start: $network
+# Required-Stop: $network
+# Should-Start:
+# Should-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description:
+# Description: :PROGRAM_NAME:
+### END INIT INFO
 
 #-> BEGIN
 
@@ -14,14 +27,14 @@ ECHO='echo'
 TOUCH='touch'
 RM='rm'
 
-prog='navel-scheduler'
+prog=':PROGRAM_NAME:'
 
 prog_full_path=":BINARY_BASEDIR:/${prog}"
 
-prog_user='navel-scheduler'
+prog_user=':PROGRAM_USER:'
 
-pidfile="/var/run/${prog}/${prog}.pid"
-default=":DEFAULT_DIR:/${prog}"
+pidfile=":RUN_DIR:/${prog}/${prog}.pid"
+default=":PROGRAM_DEFAULT_DIR:/${prog}"
 
 [[ -r "${default}" ]] && . "${default}"
 
