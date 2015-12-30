@@ -35,8 +35,9 @@ supported_os=(
 
 disable_install_step[6]=1
 
-disable_install_step[13]=1
 disable_install_step[14]=1
+disable_install_step[15]=1
+disable_install_step[16]=1
 
 #-> functions
 
@@ -90,12 +91,17 @@ _f_define() {
     program_run_directory="/var/run/${program_name}/"
     program_log_directory="/var/log/${program_name}/"
 
+    program_run_file="${program_run_directory}/${program_name}.pid"
+    program_log_file="${program_log_directory}/${program_name}.log"
+
     default_program_binary_directory="/usr/local/bin/"
 
     template_directory="${full_dirname}/template/${program_name}"
 
     program_configuration_source_directory="${template_directory}/configuration/"
     program_configuration_destination_directory="${program_home_directory}"
+
+    program_configuration_destination_main_file="${program_configuration_destination_directory}/main.json"
 
     program_service_source_directory="${template_directory}/service/"
 
@@ -160,35 +166,43 @@ _f_define() {
     }
 
     f_install_step_8() {
-        local from="${program_service_default_source_directory}/${program_name}" to="${program_service_default_destination_directory}/${program_name}"
+        local from="${program_service_default_source_directory}/${program_name}"
 
         [[ -z "${program_binary_directory}" ]] && program_binary_directory="${default_program_binary_directory}"
 
-        f_pending "Copying default script from ${from} to ${to}."
+        f_pending "Copying default script from ${from} to ${program_service_default_destination_file}."
 
-        w_cp "${from}" "${to}"
+        w_cp "${from}" "${program_service_default_destination_file}"
     }
 
     f_install_step_9() {
+        f_pending "Templating ${program_service_default_destination_file}."
+
+        ${PERL} -p -i -e "s':RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
+        ${PERL} -p -i -e "s':LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
+        ${PERL} -p -i -e "s':MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
+    }
+
+    f_install_step_10() {
         f_pending "Copying unit file from ${program_service_unit_source_file} to ${program_service_unit_destination_file}."
 
         w_cp "${program_service_unit_source_file}" "${program_service_unit_destination_file}"
     }
 
-    f_install_step_10() {
-        f_pending "Fixing ${program_service_unit_destination_file}."
+    f_install_step_11() {
+        f_pending "Templating ${program_service_unit_destination_file}."
 
         ${PERL} -p -i -e "s':DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
         ${PERL} -p -i -e "s':BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}"
     }
 
-    f_install_step_11() {
+    f_install_step_12() {
         f_pending "Configuring service ${program_name} to start at boot."
 
         w_enable_service_to_start_at_boot "${program_name}"
     }
 
-    f_install_step_12() {
+    f_install_step_13() {
         local program_binary_path="${program_binary_directory}/${program_name}"
 
         f_pending "Chowning directories and files (${program_binary_path}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
@@ -196,16 +210,22 @@ _f_define() {
         w_chown -R "${program_user}:${program_group}" "${program_binary_path}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
     }
 
-    f_install_step_13() {
+    f_install_step_14() {
         f_pending "Installing logrotate."
 
         w_install_pkg 'logrotate'
     }
 
-    f_install_step_14() {
+    f_install_step_15() {
         f_pending "Copying logrotate file from ${program_logrotate_source} to ${program_logrotate_destination}."
 
         w_cp "${program_logrotate_source}" "${program_logrotate_destination}"
+    }
+
+    f_install_step_16() {
+        f_pending "Templating ${program_logrotate_destination}."
+
+        ${PERL} -p -i -e "s':LOG_FILE:'${program_log_file}'g" "${program_logrotate_destination}"
     }
 }
 
@@ -225,6 +245,8 @@ _f_define_for_rhel() {
     )
 
     program_service_default_destination_directory='/etc/sysconfig/'
+
+    program_service_default_destination_file="${program_service_default_destination_directory}/${program_name}"
 }
 
 _f_define_for_debian() {
@@ -243,6 +265,8 @@ _f_define_for_debian() {
     )
 
     program_service_default_destination_directory='/etc/default/'
+
+    program_service_default_destination_file="${program_service_default_destination_directory}/${program_name}"
 }
 
 f_define_for_rhel6() {
@@ -332,7 +356,7 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
         2)
             unset disable_install_step[6] ;;
         3)
-            unset disable_install_step[13] disable_install_step[14] ;;
+            unset disable_install_step[14] disable_install_step[15] disable_install_step[16] ;;
         X)
             optionnal_modules[0]='JSON::XS'
             optionnal_modules[1]='MojoX::JSON::XS'
