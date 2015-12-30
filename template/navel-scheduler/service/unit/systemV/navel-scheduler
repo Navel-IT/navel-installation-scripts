@@ -29,7 +29,7 @@ RM='rm'
 
 prog=':PROGRAM_NAME:'
 
-prog_full_path=":BINARY_BASEDIR:/${prog}"
+prog_full_path=":PROGRAM_BINARY_BASEDIR:/${prog}"
 
 prog_user=':PROGRAM_USER:'
 
