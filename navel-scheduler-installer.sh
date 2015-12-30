@@ -49,8 +49,10 @@ f_usage() {
     ${ECHO} "    [-x <DIRECTORY>]"
     ${ECHO} -e "        DIRECTORY of the ${program_name} binary\n"
     ${ECHO} '    [-1]'
-    ${ECHO} -e "        Copy default configuration files\n"
+    ${ECHO} -e "        Don't try to install ${cpanminus_module}\n"
     ${ECHO} '    [-2]'
+    ${ECHO} -e "        Copy default configuration files\n"
+    ${ECHO} '    [-3]'
     ${ECHO} -e "        Install logrotate and configure it for ${program_name} logs\n"
     ${ECHO} '    [-X]'
     ${ECHO} -e "        Install ${program_name} with optional modules (improve performance)\n"
@@ -319,19 +321,23 @@ w_chown() {
 
 #-> check opts
 
-while getopts 'v:x:12Xl' OPT 2>/dev/null ; do
+while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
     case ${OPT} in
         # t)
             # git_tag=${OPTARG} ;;
         x)
             program_binary_directory=${OPTARG} ;;
         1)
+            disable_install_step[2]=1 ;;
+        3)
             unset disable_install_step[6] ;;
-        2)
+        4)
             unset disable_install_step[13] disable_install_step[14] ;;
         X)
             optionnal_modules[0]='JSON::XS'
             optionnal_modules[1]='MojoX::JSON::XS'
+
+            ;;
         l)
             ${PRINTF} '%s\n' "${supported_os[@]}"
 
