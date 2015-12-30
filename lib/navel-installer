@@ -25,19 +25,19 @@ optionnal_modules=()
 # std
 
 f_pending() {
-    ${ECHO} -en "[ \033[34mPENDING\033[0m ] ${@}\n"
+    ${ECHO} -en "[\033[34mPENDING\033[0m] ${@}\n"
 }
 
 f_ok() {
-    ${ECHO} -en "[ \033[32mOK\033[0m ] ${@}\n"
+    ${ECHO} -en "[\033[32mOK\033[0m] ${@}\n"
 }
 
 f_warning() {
-    ${ECHO} -en "[ \033[33mWARNING\033[0m ] ${@}\n"
+    ${ECHO} -en "[\033[33mWARNING\033[0m] ${@}\n"
 }
 
 f_fatal() {
-    ${ECHO} -en "[ \033[31mFATAL\033[0m ] ${1}\n"
+    ${ECHO} -en "[\033[31mFATAL\033[0m] ${1}\n"
 
     exit ${2}
 }
