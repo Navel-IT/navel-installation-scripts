@@ -26,3 +26,4 @@ bash navel-something-installer.sh master # install navel-something from http://g
 
 bash navel-something-installer.sh devel # install navel-something from http://github.com/navel-it/navel-something.git@devel
 ```
+
