@@ -68,12 +68,13 @@ f_usage() {
 _f_define() {
     # set
 
-    WHICH='which'
     CURL='curl'
     PERL='perl'
     RM='rm'
     CPANM='cpanm'
     GETENT='getent'
+    NOLOGIN='/sbin/nologin'
+    FALSE='/bin/false'
     USERADD='useradd'
     GROUPADD='groupadd'
     CP='/bin/cp'
@@ -313,7 +314,15 @@ w_install_pkg() {
 }
 
 w_useradd() {
-    ${GETENT} passwd "${1}" 1>/dev/null || ${USERADD} -rmd "${3}" -g "${2}" -s /sbin/nologin ${1}
+    local shell
+
+    if [[ -f ${NOLOGIN} ]] ; then
+        shell=${NOLOGIN}
+    else
+        shell=${FALSE}
+    fi
+
+    ${GETENT} passwd "${1}" 1>/dev/null || ${USERADD} -rmd "${3}" -g "${2}" -s ${shell} ${1}
 }
 
 w_groupadd() {
