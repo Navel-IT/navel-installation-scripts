@@ -87,7 +87,9 @@ _f_define() {
     run_directory="/var/run/"
     log_directory="/var/log/"
 
-    optionnal_modules[0]="${navel_github_base_url}/navel-bcb-rabbitmq.git"
+    navel_bcb_git_repos=(
+        "${navel_github_base_url}/navel-bcb-rabbitmq.git@${git_branch}"
+    )
 
     navel_scheduler_git_repo="${navel_github_base_url}/navel-scheduler.git"
 
@@ -141,9 +143,9 @@ _f_define() {
     }
 
     f_install_step_3() {
-        f_pending "Installing ${navel_base_git_repo}@${git_branch}, ${navel_api_blueprints_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
+        f_pending "Installing ${optionnal_modules[@]} ${navel_bcb_git_repos[@]} ${navel_base_git_repo}@${git_branch}, ${navel_api_blueprints_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
 
-        ${CPANM} "${optionnal_modules[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        ${CPANM} "${optionnal_modules[@]}" "${navel_bcb_git_repos[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
     }
 
     f_install_step_4() {
@@ -380,8 +382,8 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
         3)
             unset disable_install_step[14] disable_install_step[15] disable_install_step[16] ;;
         X)
-            optionnal_modules[1]='JSON::XS'
-            optionnal_modules[2]='MojoX::JSON::XS'
+            optionnal_modules[0]='JSON::XS'
+            optionnal_modules[1]='MojoX::JSON::XS'
 
             ;;
         l)
