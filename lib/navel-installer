@@ -13,7 +13,7 @@ WHICH='which'
 cpanminus_url='http://cpanmin.us'
 cpanminus_module='App::cpanminus'
 
-navel_github_base_url='https://github.com/navel-it/'
+navel_github_base_url='https://github.com/navel-it'
 
 navel_base_git_repo="${navel_github_base_url}/navel-base.git"
 navel_api_blueprints_git_repo="${navel_github_base_url}/navel-api-blueprints.git"
