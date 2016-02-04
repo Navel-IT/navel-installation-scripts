@@ -87,7 +87,9 @@ _f_define() {
     run_directory="/var/run/"
     log_directory="/var/log/"
 
-    navel_scheduler_git_repo='https://github.com/navel-it/navel-scheduler.git'
+    optionnal_modules[0]="${navel_github_base_url}/navel-bcb-rabbitmq.git"
+
+    navel_scheduler_git_repo="${navel_github_base_url}/navel-scheduler.git"
 
     program_user='navel-scheduler'
     program_group='navel-scheduler'
@@ -378,8 +380,8 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
         3)
             unset disable_install_step[14] disable_install_step[15] disable_install_step[16] ;;
         X)
-            optionnal_modules[0]='JSON::XS'
-            optionnal_modules[1]='MojoX::JSON::XS'
+            optionnal_modules[1]='JSON::XS'
+            optionnal_modules[2]='MojoX::JSON::XS'
 
             ;;
         l)
