@@ -143,9 +143,9 @@ _f_define() {
     }
 
     f_install_step_3() {
-        f_pending "Installing ${optionnal_modules[@]} ${navel_bcb_git_repos[@]} ${navel_base_git_repo}@${git_branch}, ${navel_api_blueprints_git_repo}@${git_branch} and ${navel_scheduler_git_repo}@${git_branch}."
+        f_pending "Installing ${optionnal_modules[@]} ${navel_base_git_repo}@${git_branch} ${navel_bcb_git_repos[@]} ${navel_api_blueprints_git_repo}@${git_branch} ${navel_scheduler_git_repo}@${git_branch}."
 
-        ${CPANM} "${optionnal_modules[@]}" "${navel_bcb_git_repos[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        ${CPANM} "${optionnal_modules[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_bcb_git_repos[@]}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
     }
 
     f_install_step_4() {
