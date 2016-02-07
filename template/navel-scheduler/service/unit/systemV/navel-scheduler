@@ -24,17 +24,20 @@
 . /etc/rc.d/init.d/functions
 
 ECHO='echo'
-TOUCH='touch'
-RM='rm'
+MKDIR='mkdir'
+CHOWN='chown'
 
 prog=':PROGRAM_NAME:'
 
 prog_full_path=":PROGRAM_BINARY_BASEDIR:/${prog}"
 
 prog_user=':PROGRAM_USER:'
+prog_group=':PROGRAM_GROUP:'
 
-pidfile=":RUN_DIR:/${prog}/${prog}.pid"
 default=":PROGRAM_DEFAULT_DIR:/${prog}"
+
+rundir=':RUN_DIR:'
+pidfile="${rundir}/${prog}/${prog}.pid"
 
 [[ -r "${default}" ]] && . "${default}"
 
@@ -42,6 +45,9 @@ default=":PROGRAM_DEFAULT_DIR:/${prog}"
 
 f_start() {
     ${ECHO} -n "Starting ${prog}: "
+
+    ${MKDIR} -p "${rundir}"
+    ${CHOWN} -R "${prog_user}:${prog_group}" "${rundir}"
 
     daemon --user="${prog_user}" --pidfile="${pidfile}" "${prog_full_path}" --daemonize ${OPTS}
 
