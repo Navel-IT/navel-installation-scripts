@@ -35,9 +35,9 @@ supported_os=(
 
 disable_install_step[6]=1
 
-disable_install_step[14]=1
 disable_install_step[15]=1
 disable_install_step[16]=1
+disable_install_step[17]=1
 
 #-> functions
 
@@ -221,24 +221,30 @@ _f_define() {
     }
 
     f_install_step_13() {
+        f_pending "Chmoding +x files (${program_binary_file}, ${program_service_unit_destination_file})."
+
+        w_chmod +x "${program_binary_file}" "${program_service_unit_destination_file}"
+    }
+
+    f_install_step_14() {
         f_pending "Chowning directories and files (${program_binary_file}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
 
         w_chown -R "${program_user}:${program_group}" "${program_binary_file}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
     }
 
-    f_install_step_14() {
+    f_install_step_15() {
         f_pending "Installing logrotate."
 
         w_install_pkg 'logrotate'
     }
 
-    f_install_step_15() {
+    f_install_step_16() {
         f_pending "Copying logrotate file from ${program_logrotate_source} to ${program_logrotate_destination}."
 
         w_cp "${program_logrotate_source}" "${program_logrotate_destination}"
     }
 
-    f_install_step_16() {
+    f_install_step_17() {
         f_pending "Templating ${program_logrotate_destination}."
 
         ${PERL} -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_logrotate_destination}"
@@ -380,7 +386,7 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
         2)
             unset disable_install_step[6] ;;
         3)
-            unset disable_install_step[14] disable_install_step[15] disable_install_step[16] ;;
+            unset disable_install_step[15] disable_install_step[16] disable_install_step[17] ;;
         X)
             optionnal_modules[0]='JSON::XS'
             optionnal_modules[1]='MojoX::JSON::XS'
