@@ -326,11 +326,11 @@ w_install_pkg() {
 w_useradd() {
     local shell
 
-    if [[ -f ${NOLOGIN} ]] ; then
-        shell=${NOLOGIN}
-    else
+    # if [[ -f ${NOLOGIN} ]] ; then
+        # shell=${NOLOGIN}
+    # else
         shell=${FALSE}
-    fi
+    # fi
 
     ${GETENT} passwd "${1}" 1>/dev/null || ${USERADD} -rmd "${3}" -g "${2}" -s ${shell} ${1}
 }
