@@ -2,7 +2,7 @@
     size 100M
     rotate 30
     compress
-    delaycompress
+    copytruncate
     notifempty
     missingok
 }
