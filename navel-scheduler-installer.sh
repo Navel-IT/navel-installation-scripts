@@ -110,7 +110,7 @@ _f_define() {
     program_configuration_source_directory="${program_template_source_directory}/configuration/"
     program_configuration_destination_directory="${program_home_directory}"
 
-    program_configuration_destination_main_file="${program_configuration_destination_directory}/main.json"
+    program_configuration_destination_main_file="${program_configuration_destination_directory}/main.yml"
 
     program_service_source_directory="${program_template_source_directory}/service/"
 
