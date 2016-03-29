@@ -19,10 +19,12 @@ bash navel-something-installer.sh # show available options
 ```
 
 Install
-------
+-------
 
 ```bash
 bash navel-something-installer.sh master # install navel-something from http://github.com/navel-it/navel-something.git@master
 
 bash navel-something-installer.sh devel # install navel-something from http://github.com/navel-it/navel-something.git@devel
+
+perlbrew exec --with 5.22.1 bash navel-something-installer.sh master # with perlbrew
 ```
