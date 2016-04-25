@@ -44,23 +44,23 @@ disable_install_step[17]=1
 # usage
 
 f_usage() {
-    ${ECHO} 'Usage:'
-    ${ECHO} -e "    ${0} [<options>] <git-branch>\n"
-    ${ECHO} 'Options:'
-    ${ECHO} "    [-x <DIRECTORY>]"
-    ${ECHO} -e "        DIRECTORY of the ${program_name} binary\n"
-    ${ECHO} '    [-1]'
-    ${ECHO} -e "        Don't try to install ${cpanminus_module}\n"
-    ${ECHO} '    [-2]'
-    ${ECHO} -e "        Copy default configuration files\n"
-    ${ECHO} '    [-3]'
-    ${ECHO} -e "        Install logrotate and configure it for ${program_name} logs\n"
-    ${ECHO} '    [-X]'
-    ${ECHO} -e "        Install ${program_name} with optional modules (improve performance)\n"
-    ${ECHO} '    [-l]'
-    ${ECHO} -e "        Return the list of supported operating systems\n"
+    "${ECHO}" 'Usage:'
+    "${ECHO}" -e "    ${0} [<options>] <git-branch>\n"
+    "${ECHO}" 'Options:'
+    "${ECHO}" "    [-x <DIRECTORY>]"
+    "${ECHO}" -e "        DIRECTORY of the ${program_name} binary\n"
+    "${ECHO}" '    [-1]'
+    "${ECHO}" -e "        Don't try to install ${cpanminus_module}\n"
+    "${ECHO}" '    [-2]'
+    "${ECHO}" -e "        Copy default configuration files\n"
+    "${ECHO}" '    [-3]'
+    "${ECHO}" -e "        Install logrotate and configure it for ${program_name} logs\n"
+    "${ECHO}" '    [-X]'
+    "${ECHO}" -e "        Install ${program_name} with optional modules (improve performance)\n"
+    "${ECHO}" '    [-l]'
+    "${ECHO}" -e "        Return the list of supported operating systems\n"
 
-    exit ${1}
+    exit $1
 }
 
 # define
@@ -139,13 +139,13 @@ _f_define() {
     f_install_step_2() {
         f_pending "Installing ${cpanminus_module} via ${CURL}."
 
-        ${CURL} -L "${cpanminus_url}" | ${PERL} - "${cpanminus_module}"
+        "${CURL}" -L "${cpanminus_url}" | ${PERL} - "${cpanminus_module}"
     }
 
     f_install_step_3() {
         f_pending "Installing ${optionnal_modules[@]} ${navel_base_git_repo}@${git_branch} ${navel_bcb_git_repos[@]} ${navel_api_blueprints_git_repo}@${git_branch} ${navel_scheduler_git_repo}@${git_branch}."
 
-        ${CPANM} "${optionnal_modules[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_bcb_git_repos[@]}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        "${CPANM}" "${optionnal_modules[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_bcb_git_repos[@]}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
     }
 
     f_install_step_4() {
@@ -185,9 +185,9 @@ _f_define() {
     f_install_step_9() {
         f_pending "Templating ${program_service_default_destination_file}."
 
-        ${PERL} -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
+        "${PERL}" -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
     }
 
     f_install_step_10() {
@@ -203,15 +203,15 @@ _f_define() {
 
         program_binary_file="${program_binary_directory}/${program_name}"
 
-        ${PERL} -pi -e "s':PROGRAM_NAME:'${program_name}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_USER:'${program_user}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_GROUP:'${program_group}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_DEFAULT_FILE:'${program_service_default_destination_file}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':PROGRAM_BINARY_FILE:'${program_binary_file}'g" "${program_service_unit_destination_file}" && \
-        ${PERL} -pi -e "s':RUN_DIR:'${run_directory}'g" "${program_service_unit_destination_file}"
-        ${PERL} -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_unit_destination_file}"
+        "${PERL}" -pi -e "s':PROGRAM_NAME:'${program_name}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_USER:'${program_user}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_GROUP:'${program_group}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_DEFAULT_DIR:'${program_service_default_destination_directory}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_DEFAULT_FILE:'${program_service_default_destination_file}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_BINARY_FILE:'${program_binary_file}'g" "${program_service_unit_destination_file}" && \
+        "${PERL}" -pi -e "s':RUN_DIR:'${run_directory}'g" "${program_service_unit_destination_file}"
+        "${PERL}" -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_unit_destination_file}"
     }
 
     f_install_step_12() {
@@ -247,7 +247,7 @@ _f_define() {
     f_install_step_17() {
         f_pending "Templating ${program_logrotate_destination}."
 
-        ${PERL} -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_logrotate_destination}"
+        "${PERL}" -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_logrotate_destination}"
     }
 }
 
@@ -310,16 +310,16 @@ f_define_for_debian8() {
 # wrappers
 
 w_match() {
-    ( ${ECHO} "${1}" | ${GREP} -E "${2}" &>/dev/null ) && return 0
+    ( "${ECHO}" "${1}" | "${GREP}" -E "${2}" &>/dev/null ) && return 0
 
     return 1
 }
 
 w_install_pkg() {
     if c_os_is_rhel6 || c_os_is_rhel7 ; then
-        ${YUM} -y install "${@}"
+        "${YUM}" -y install "${@}"
     elif c_os_is_debian7 || c_os_is_debian8 ; then
-        ${APT_GET} -y install "${@}"
+        "${APT_GET}" -y install "${@}"
     fi
 }
 
@@ -329,58 +329,58 @@ w_useradd() {
     # if [[ -f ${NOLOGIN} ]] ; then
         # shell=${NOLOGIN}
     # else
-        shell=${FALSE}
+        shell="${FALSE}"
     # fi
 
-    ${GETENT} passwd "${1}" 1>/dev/null || ${USERADD} -rmd "${3}" -g "${2}" -s ${shell} ${1}
+    "${GETENT}" passwd "${1}" 1>/dev/null || "${USERADD}" -rmd "${3}" -g "${2}" -s "${shell}" "${1}"
 }
 
 w_groupadd() {
-    ${GETENT} group "${1}" 1>/dev/null || ${GROUPADD} -r "${1}"
+    "${GETENT}" group "${1}" 1>/dev/null || "${GROUPADD}" -r "${1}"
 }
 
 w_cp() {
-    ${CP} -r "${@}"
+    "${CP}" -r "${@}"
 }
 
 w_mkdir() {
     local fails=0 directory
 
     for directory in "${@}" ; do
-        ( [[ -d "${directory}" ]] || ${MKDIR} -p "${directory}" ) || let fails++
+        ( [[ -d "${directory}" ]] || "${MKDIR}" -p "${directory}" ) || let fails++
     done
 
-    return ${fails}
+    return $fails
 }
 
 w_chmod() {
-    ${CHMOD} "${@}"
+    "${CHMOD}" "${@}"
 }
 
 w_enable_service_to_start_at_boot() {
     if c_os_support_systemd ; then
-        ${SYSTEMCTL} enable "${1}"
+        "${SYSTEMCTL}" enable "${1}"
     else
         if c_os_is_debian7 || c_os_is_debian8 ; then
-            ${UPDATE_RC_D} "${1}" defaults
+            "${UPDATE_RC_D}" "${1}" defaults
         elif c_os_is_rhel6 || c_os_is_rhel7 ; then
-            ${CHKCONFIG} "${1}" on
+            "${CHKCONFIG}" "${1}" on
         fi
     fi
 }
 
 w_chown() {
-    ${CHOWN} "${@}"
+    "${CHOWN}" "${@}"
 }
 
 #-> check opts
 
 while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
-    case ${OPT} in
+    case "${OPT}" in
         # t)
             # git_tag=${OPTARG} ;;
         x)
-            override_program_binary_directory=${OPTARG} ;;
+            override_program_binary_directory="${OPTARG}" ;;
         1)
             disable_install_step[2]=1 ;;
         2)
@@ -393,7 +393,7 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
 
             ;;
         l)
-            ${PRINTF} '%s\n' "${supported_os[@]}"
+            "${PRINTF}" '%s\n' "${supported_os[@]}"
 
             exit 0
 

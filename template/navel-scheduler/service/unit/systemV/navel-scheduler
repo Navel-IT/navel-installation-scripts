@@ -44,27 +44,27 @@ pidfile="${rundir}/${prog}/${prog}.pid"
 #-> functions
 
 f_start() {
-    ${ECHO} -n "Starting ${prog}: "
+    "${ECHO}" -n "Starting ${prog}: "
 
-    ${MKDIR} -p "${rundir}"
-    ${CHOWN} -R "${prog_user}:${prog_group}" "${rundir}"
+    "${MKDIR}" -p "${rundir}"
+    "${CHOWN}" -R "${prog_user}:${prog_group}" "${rundir}"
 
     daemon --user="${prog_user}" --pidfile="${pidfile}" "${prog_full_path}" --daemonize ${OPTS}
 
-    ${ECHO}
+    "${ECHO}"
 }
 
 f_stop() {
-    ${ECHO} -n "Stopping ${prog}: "
+    "${ECHO}" -n "Stopping ${prog}: "
 
     killproc -p "${pidfile}" "${prog_full_path}"
 
-    ${ECHO}
+    "${ECHO}"
 }
 
 #-> main
 
-case ${1} in
+case "${1}" in
     start)
         f_start ;;
     stop)
@@ -78,7 +78,7 @@ case ${1} in
 
         ;;
     *)
-        ${ECHO} "Usage: ${0} {start|stop|restart|status}"
+        "${ECHO}" "Usage: ${0} {start|stop|restart|status}"
 
         exit 1
 
