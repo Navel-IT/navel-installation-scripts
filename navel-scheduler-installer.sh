@@ -186,6 +186,7 @@ _f_define() {
         f_pending "Templating ${program_service_default_destination_file}."
 
         "${PERL}" -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
+        "${PERL}" -pi -e "s':PROGRAM_RUN_DIR:'${program_run_directory}'g" "${program_service_default_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
     }
