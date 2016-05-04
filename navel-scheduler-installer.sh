@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# navel-installer is developed by Yoann Le Garff, Nicolas Boquet and Yann Le Bras under GNU GPL v3
+
+# Copyright (C) 2015 Yoann Le Garff, Nicolas Boquet and Yann Le Bras
+# navel-installation-scripts is licensed under the Apache License, Version 2.0
 
 #-> BEGIN
 

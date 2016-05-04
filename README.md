@@ -1,5 +1,5 @@
 navel-installation-scripts
-==================
+==========================
 
 This collection of scripts provides a unified interface for installing Navel projects on different Linux distributions.
 
@@ -28,3 +28,13 @@ bash navel-something-installer.sh devel # install navel-something from http://gi
 
 perlbrew exec --with 5.22.1 bash navel-something-installer.sh master # with perlbrew
 ```
+
+Copyright
+---------
+
+Copyright (C) 2015 Yoann Le Garff, Nicolas Boquet and Yann Le Bras
+
+License
+-------
+
+navel-installation-scripts is licensed under the Apache License, Version 2.0
