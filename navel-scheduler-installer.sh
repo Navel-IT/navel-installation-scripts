@@ -57,8 +57,6 @@ f_usage() {
     "${ECHO}" -e "        Copy default configuration files\n"
     "${ECHO}" '    [-3]'
     "${ECHO}" -e "        Install logrotate and configure it for ${program_name} logs\n"
-    "${ECHO}" '    [-X]'
-    "${ECHO}" -e "        Install ${program_name} with optional modules (improve performance)\n"
     "${ECHO}" '    [-l]'
     "${ECHO}" -e "        Return the list of supported operating systems\n"
 
@@ -145,9 +143,9 @@ _f_define() {
     }
 
     f_install_step_3() {
-        f_pending "Installing ${optionnal_modules[@]} ${navel_base_git_repo}@${git_branch} ${navel_bcb_git_repos[@]} ${navel_api_blueprints_git_repo}@${git_branch} ${navel_scheduler_git_repo}@${git_branch}."
+        f_pending "Installing ${navel_base_git_repo}@${git_branch} ${navel_bcb_git_repos[@]} ${navel_api_blueprints_git_repo}@${git_branch} ${navel_scheduler_git_repo}@${git_branch}."
 
-        "${CPANM}" "${optionnal_modules[@]}" "${navel_base_git_repo}@${git_branch}" "${navel_bcb_git_repos[@]}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        "${CPANM}" "${navel_base_git_repo}@${git_branch}" "${navel_bcb_git_repos[@]}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
     }
 
     f_install_step_4() {
@@ -378,7 +376,7 @@ w_chown() {
 
 #-> check opts
 
-while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
+while getopts 'v:x:123l' OPT 2>/dev/null ; do
     case "${OPT}" in
         # t)
             # git_tag=${OPTARG} ;;
@@ -390,11 +388,6 @@ while getopts 'v:x:123Xl' OPT 2>/dev/null ; do
             unset disable_install_step[6] ;;
         3)
             unset disable_install_step[15] disable_install_step[16] disable_install_step[17] ;;
-        X)
-            optionnal_modules[0]='JSON::XS'
-            optionnal_modules[1]='MojoX::JSON::XS'
-
-            ;;
         l)
             "${PRINTF}" '%s\n' "${supported_os[@]}"
 

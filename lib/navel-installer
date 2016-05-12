@@ -21,8 +21,6 @@ navel_api_blueprints_git_repo="${navel_github_base_url}/navel-api-blueprints.git
 
 disable_install_step=()
 
-optionnal_modules=()
-
 #-> functions
 
 # std
