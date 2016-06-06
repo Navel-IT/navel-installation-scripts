@@ -110,7 +110,7 @@ _f_define() {
     program_configuration_source_directory="${program_template_source_directory}/configuration/"
     program_configuration_destination_directory="${program_home_directory}"
 
-    program_configuration_destination_main_file="${program_configuration_destination_directory}/main.yml"
+    program_configuration_destination_meta_file="${program_configuration_destination_directory}/meta.yml"
 
     program_service_source_directory="${program_template_source_directory}/service/"
 
@@ -188,7 +188,7 @@ _f_define() {
         "${PERL}" -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_RUN_DIR:'${program_run_directory}'g" "${program_service_default_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
-        "${PERL}" -pi -e "s':PROGRAM_MAIN_FILE:'${program_configuration_destination_main_file}'g" "${program_service_default_destination_file}"
+        "${PERL}" -pi -e "s':PROGRAM_META_FILE:'${program_configuration_destination_meta_file}'g" "${program_service_default_destination_file}"
     }
 
     f_install_step_10() {

@@ -1,1 +1,1 @@
-OPTS='--daemonize-pid-file=:PROGRAM_RUN_FILE: --daemonize-chdir=:PROGRAM_RUN_DIR: --log-file-path=:PROGRAM_LOG_FILE: :PROGRAM_MAIN_FILE:'
+OPTS='--daemonize-pid-file=:PROGRAM_RUN_FILE: --daemonize-chdir=:PROGRAM_RUN_DIR: --log-file-path=:PROGRAM_LOG_FILE: :PROGRAM_META_FILE:'
