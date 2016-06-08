@@ -1,2 +1,11 @@
 ---
-[]
+  -
+    ca: ~
+    cert: ~
+    ciphers: ~
+    interface_mask: '*'
+    key: ~
+    name: direct
+    port: 8443
+    tls: 1
+    verify: ~
