@@ -6,6 +6,6 @@
     interface_mask: '*'
     key: ~
     name: direct
-    port: 8443
-    tls: 1
+    port: 8080
+    tls: 0
     verify: ~
