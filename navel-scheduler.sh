@@ -9,8 +9,6 @@
 
 DIRNAME='dirname'
 READLINK='readlink'
-ECHO='echo'
-PRINTF='printf'
 
 #-> where am i ?
 
@@ -19,19 +17,9 @@ full_dirname=$(${READLINK} -f ${dirname})
 
 #-> set (avoid changing these variables)
 
-. "${full_dirname}/lib/navel-installer"
-
-navel_git_repo_branch_regex='^(master|devel)$'
-# navel_git_repo_tag_regex='^[0-9]+\.[0-9]+$'
+. "${full_dirname}/lib/navel-installer" || exit 1
 
 program_name='navel-scheduler'
-
-supported_os=(
-    'rhel6'
-    'rhel7'
-    'debian7'
-    'debian8'
-)
 
 # disabled steps
 
@@ -47,7 +35,7 @@ disable_install_step[17]=1
 
 f_usage() {
     "${ECHO}" 'Usage:'
-    "${ECHO}" -e "    ${0} [<options>] <git-branch>\n"
+    "${ECHO}" -e "    ${0} [<options>] [<git-branch> (default to ${navel_git_remote_branch}]\n"
     "${ECHO}" 'Options:'
     "${ECHO}" "    [-x <DIRECTORY>]"
     "${ECHO}" -e "        DIRECTORY of the ${program_name} binary\n"
@@ -68,30 +56,15 @@ f_usage() {
 _f_define() {
     # set
 
-    CURL='curl'
-    PERL='perl'
-    RM='rm'
-    CPANM='cpanm'
-    GETENT='getent'
-    NOLOGIN='/sbin/nologin'
-    FALSE='/bin/false'
-    USERADD='useradd'
-    GROUPADD='groupadd'
-    CP='/bin/cp'
-    MKDIR='mkdir'
-    CHMOD='chmod'
-    CHOWN='chown'
-    SYSTEMCTL='systemctl'
+    mandatory_pkg_to_install_via_pkg_manager=(
+        'curl'
+        'gcc'
+        'libxml2'
+    )
 
     configuration_directory='/usr/local/etc/'
     run_directory="/var/run/"
     log_directory="/var/log/"
-
-    navel_bcb_git_repos=(
-        "${navel_github_base_url}/navel-bcb-rabbitmq.git@${git_branch}"
-    )
-
-    navel_scheduler_git_repo="${navel_github_base_url}/navel-scheduler.git"
 
     program_user='navel-scheduler'
     program_group='navel-scheduler'
@@ -104,8 +77,6 @@ _f_define() {
     program_log_file="${program_log_directory}/${program_name}.log"
 
     program_binary_directory="/usr/local/bin/"
-
-    program_template_source_directory="${full_dirname}/template/${program_name}"
 
     program_configuration_source_directory="${program_template_source_directory}/configuration/"
     program_configuration_destination_directory="${program_home_directory}"
@@ -131,7 +102,7 @@ _f_define() {
     # installation steps
 
     f_install_step_1() {
-        f_pending "Installing packages ${mandatory_pkg_to_install_via_pkg_manager[@]} via package manager."
+        f_pending "Installing packages ${mandatory_pkg_to_install_via_pkg_manager[@]}."
 
         w_install_pkg "${mandatory_pkg_to_install_via_pkg_manager[@]}"
     }
@@ -139,13 +110,15 @@ _f_define() {
     f_install_step_2() {
         f_pending "Installing ${cpanminus_module} via ${CURL}."
 
-        "${CURL}" -L "${cpanminus_url}" | ${PERL} - "${cpanminus_module}"
+        "${CURL}" -L "${cpanminus_url}" | "${PERL}" - "${cpanminus_module}"
     }
 
     f_install_step_3() {
-        f_pending "Installing ${navel_base_git_repo}@${git_branch} ${navel_bcb_git_repos[@]} ${navel_api_blueprints_git_repo}@${git_branch} ${navel_scheduler_git_repo}@${git_branch}."
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain 'navel-base' 'navel-base-daemon' 'navel-mojolicious-plugin-json-xs' 'navel-mojolicious-plugin-logger' 'navel-mojolicious-plugin-swagger2-stdresponses' 'navel-logger' 'navel-api' 'navel-event' 'navel-anyevent-pool' 'navel-bcb' 'navel-bcb-rabbitmq' $program_name)
 
-        "${CPANM}" "${navel_base_git_repo}@${git_branch}" "${navel_bcb_git_repos[@]}" "${navel_api_blueprints_git_repo}@${git_branch}" "${navel_scheduler_git_repo}@${git_branch}"
+        f_pending "Installing ${cpanm_navel_gitchain[@]}."
+
+        "${CPANM}" "${cpanm_navel_gitchain[@]}"
     }
 
     f_install_step_4() {
@@ -222,13 +195,13 @@ _f_define() {
     }
 
     f_install_step_13() {
-        f_pending "Chmoding +x files (${program_binary_file}, ${program_service_unit_destination_file})."
+        f_pending "Chmoding (+x) ${program_service_unit_destination_file}."
 
-        w_chmod +x "${program_binary_file}" "${program_service_unit_destination_file}"
+        w_chmod +x "${program_service_unit_destination_file}"
     }
 
     f_install_step_14() {
-        f_pending "Chowning directories and files (${program_binary_file}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}) to ${program_user}:${program_group}."
+        f_pending "Recursively chowning (${program_user}:${program_group}) ${program_binary_file}, ${program_home_directory}, ${program_service_unit_destination_file}, ${program_run_directory} and ${program_log_directory}."
 
         w_chown -R "${program_user}:${program_group}" "${program_binary_file}" "${program_home_directory}" "${program_service_unit_destination_file}" "${program_run_directory}" "${program_log_directory}"
     }
@@ -260,10 +233,7 @@ _f_define_for_rhel() {
     YUM='yum'
     CHKCONFIG='chkconfig'
 
-    mandatory_pkg_to_install_via_pkg_manager=(
-        'curl'
-        'gcc'
-        'libxml2'
+    mandatory_pkg_to_install_via_pkg_manager+=(
         'libxml2-devel'
     )
 
@@ -281,9 +251,6 @@ _f_define_for_debian() {
     UPDATE_RC_D='update-rc.d'
 
     mandatory_pkg_to_install_via_pkg_manager=(
-        'curl'
-        'gcc'
-        'libxml2'
         'libxml2-dev'
     )
 
@@ -308,75 +275,9 @@ f_define_for_debian8() {
     _f_define_for_debian
 }
 
-# wrappers
-
-w_match() {
-    ( "${ECHO}" "${1}" | "${GREP}" -E "${2}" &>/dev/null ) && return 0
-
-    return 1
-}
-
-w_install_pkg() {
-    if c_os_is_rhel6 || c_os_is_rhel7 ; then
-        "${YUM}" -y install "${@}"
-    elif c_os_is_debian7 || c_os_is_debian8 ; then
-        "${APT_GET}" -y install "${@}"
-    fi
-}
-
-w_useradd() {
-    local shell
-
-    # if [[ -f ${NOLOGIN} ]] ; then
-        # shell=${NOLOGIN}
-    # else
-        shell="${FALSE}"
-    # fi
-
-    "${GETENT}" passwd "${1}" 1>/dev/null || "${USERADD}" -rmd "${3}" -g "${2}" -s "${shell}" "${1}"
-}
-
-w_groupadd() {
-    "${GETENT}" group "${1}" 1>/dev/null || "${GROUPADD}" -r "${1}"
-}
-
-w_cp() {
-    "${CP}" -r "${@}"
-}
-
-w_mkdir() {
-    local fails=0 directory
-
-    for directory in "${@}" ; do
-        ( [[ -d "${directory}" ]] || "${MKDIR}" -p "${directory}" ) || let fails++
-    done
-
-    return $fails
-}
-
-w_chmod() {
-    "${CHMOD}" "${@}"
-}
-
-w_enable_service_to_start_at_boot() {
-    if c_os_support_systemd ; then
-        "${SYSTEMCTL}" enable "${1}"
-    else
-        if c_os_is_debian7 || c_os_is_debian8 ; then
-            "${UPDATE_RC_D}" "${1}" defaults
-        elif c_os_is_rhel6 || c_os_is_rhel7 ; then
-            "${CHKCONFIG}" "${1}" on
-        fi
-    fi
-}
-
-w_chown() {
-    "${CHOWN}" "${@}"
-}
-
 #-> check opts
 
-while getopts 'v:x:123l' OPT 2>/dev/null ; do
+while getopts 'x:123l' OPT 2>/dev/null ; do
     case "${OPT}" in
         # t)
             # git_tag=${OPTARG} ;;
@@ -399,11 +300,9 @@ while getopts 'v:x:123l' OPT 2>/dev/null ; do
     esac
 done
 
-git_branch="${@: -1}"
+navel_git_remote_branch="${@: -1}"
 
-( # w_match "${git_tag}" "${navel_git_repo_tag_regex}"
-    w_match "${git_branch}" "${navel_git_repo_branch_regex}"
-) || f_usage 1
+[[ -z "${navel_git_remote_branch}" ]] && f_usage 1
 
 #-> start install
 
