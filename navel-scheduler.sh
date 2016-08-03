@@ -184,7 +184,7 @@ _f_define() {
         "${PERL}" -pi -e "s':PROGRAM_DEFAULT_FILE:'${program_service_default_destination_file}'g" "${program_service_unit_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_BINARY_BASEDIR:'${program_binary_directory}'g" "${program_service_unit_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_BINARY_FILE:'${program_binary_file}'g" "${program_service_unit_destination_file}" && \
-        "${PERL}" -pi -e "s':RUN_DIR:'${run_directory}'g" "${program_service_unit_destination_file}"
+        "${PERL}" -pi -e "s':RUN_DIR:'${run_directory}'g" "${program_service_unit_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_unit_destination_file}"
     }
 
