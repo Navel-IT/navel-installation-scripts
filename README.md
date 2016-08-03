@@ -17,7 +17,7 @@ cd navel-installation-scripts/
 
 bash navel-something-installer.sh # show available options
 
-perlbrew exec --with 5.24.0 navel-something-installer.sh master # install navel-something from http://github.com/navel-it/navel-something.git@master
+perlbrew exec --with 5.24.0 navel-something-installer.sh devel # install navel-something from http://github.com/navel-it/navel-something.git@devel
 ```
 
 Copyright
