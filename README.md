@@ -1,9 +1,7 @@
 navel-installation-scripts
 ==========================
 
-This collection of scripts provides a unified interface for installing Navel projects on different Linux distributions.
-
-Each project has a corresponding script for it's installation. For exemple navel-scheduler has `navel-scheduler-installer.sh`.
+This collection of scripts provides a unified interface for installing Navel "main projects" (each of them got a corresponding script) on different Linux distributions.
 
 Usage
 -----
