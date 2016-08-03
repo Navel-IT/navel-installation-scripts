@@ -6,6 +6,7 @@
 #-> set
 
 ECHO='echo'
+PRINTF='printf'
 GREP='grep'
 WHICH='which'
 CURL='curl'
@@ -28,7 +29,6 @@ cpanminus_url='http://cpanmin.us'
 cpanminus_module='App::cpanminus'
 
 navel_git_remote_url='https://github.com/navel-it'
-navel_git_remote_branch='master'
 
 disable_install_step=()
 
@@ -38,10 +38,6 @@ supported_os=(
     'debian7'
     'debian8'
 )
-
-#-> set
-
-program_template_source_directory="${full_dirname}/template/${program_name}"
 
 #-> functions
 
@@ -72,7 +68,7 @@ f_build_cpanm_navel_gitchain() {
         gitchain+=("${navel_git_remote_url}/${package}.git@${navel_git_remote_branch}")
     done
 
-    return gitchain
+    $ECHO "${gitchain[@]}"
 }
 
 f_start_install() {

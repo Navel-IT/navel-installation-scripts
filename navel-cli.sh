@@ -10,12 +10,10 @@
 DIRNAME='dirname'
 READLINK='readlink'
 
-#-> where am i ?
-
-dirname=$(${DIRNAME} $0)
-full_dirname=$(${READLINK} -f ${dirname})
-
 #-> set (avoid changing these variables)
+
+dirname=$("${DIRNAME}" $0)
+full_dirname=$("${READLINK}" -f ${dirname})
 
 . "${full_dirname}/lib/navel-installer" || exit 1
 
@@ -27,7 +25,7 @@ program_name='navel-cli'
 
 f_usage() {
     "${ECHO}" 'Usage:'
-    "${ECHO}" -e "    ${0} [<options>] [<git-branch> (default to ${navel_git_remote_branch}]\n"
+    "${ECHO}" -e "    ${0} [<options>] <git-branch>\n"
     "${ECHO}" 'Options:'
     "${ECHO}" '    [-1]'
     "${ECHO}" -e "        Don't try to install ${cpanminus_module}\n"
@@ -65,9 +63,9 @@ _f_define() {
     f_install_step_3() {
         local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain 'navel-base' 'navel-api' 'navel-logger' $program_name)
 
-        f_pending "Installing ${cpanm_navel_gitchain[@]}."
+        f_pending "Installing ${cpanm_navel_gitchain}."
 
-        "${CPANM}" "${cpanm_navel_gitchain[@]}"
+        "${CPANM}" $cpanm_navel_gitchain
     }
 }
 

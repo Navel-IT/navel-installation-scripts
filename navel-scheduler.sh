@@ -10,12 +10,10 @@
 DIRNAME='dirname'
 READLINK='readlink'
 
-#-> where am i ?
-
-dirname=$(${DIRNAME} $0)
-full_dirname=$(${READLINK} -f ${dirname})
-
 #-> set (avoid changing these variables)
+
+dirname=$("${DIRNAME}" $0)
+full_dirname=$("${READLINK}" -f ${dirname})
 
 . "${full_dirname}/lib/navel-installer" || exit 1
 
@@ -35,7 +33,7 @@ disable_install_step[17]=1
 
 f_usage() {
     "${ECHO}" 'Usage:'
-    "${ECHO}" -e "    ${0} [<options>] [<git-branch> (default to ${navel_git_remote_branch}]\n"
+    "${ECHO}" -e "    ${0} [<options>] <git-branch>\n"
     "${ECHO}" 'Options:'
     "${ECHO}" "    [-x <DIRECTORY>]"
     "${ECHO}" -e "        DIRECTORY of the ${program_name} binary\n"
@@ -68,6 +66,8 @@ _f_define() {
 
     program_user='navel-scheduler'
     program_group='navel-scheduler'
+
+    program_template_source_directory="${full_dirname}/template/${program_name}"
 
     program_home_directory="${configuration_directory}/${program_name}/"
     program_run_directory="${run_directory}/${program_name}/"
@@ -116,9 +116,9 @@ _f_define() {
     f_install_step_3() {
         local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain 'navel-base' 'navel-base-daemon' 'navel-mojolicious-plugin-json-xs' 'navel-mojolicious-plugin-logger' 'navel-mojolicious-plugin-swagger2-stdresponses' 'navel-logger' 'navel-api' 'navel-event' 'navel-anyevent-pool' 'navel-bcb' 'navel-bcb-rabbitmq' $program_name)
 
-        f_pending "Installing ${cpanm_navel_gitchain[@]}."
+        f_pending "Installing ${cpanm_navel_gitchain}."
 
-        "${CPANM}" "${cpanm_navel_gitchain[@]}"
+        "${CPANM}" $cpanm_navel_gitchain
     }
 
     f_install_step_4() {
@@ -250,7 +250,7 @@ _f_define_for_debian() {
     APT_GET='apt-get'
     UPDATE_RC_D='update-rc.d'
 
-    mandatory_pkg_to_install_via_pkg_manager=(
+    mandatory_pkg_to_install_via_pkg_manager+=(
         'libxml2-dev'
     )
 
