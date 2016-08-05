@@ -61,7 +61,7 @@ _f_define() {
     }
 
     f_install_step_3() {
-        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain 'navel-base' 'navel-api' 'navel-logger' $program_name)
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base,api,logger} $program_name)
 
         f_pending "Installing ${cpanm_navel_gitchain}."
 
