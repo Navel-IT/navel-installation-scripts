@@ -5,8 +5,7 @@
   publishers:
     definitions_from_file: /usr/local/etc/navel-scheduler/publishers.yml
     maximum: 0
-  webservices:
-    definitions_from_file: /usr/local/etc/navel-scheduler/webservices.yml
+  webservice:
     credentials:
       login: admin
       password: password
