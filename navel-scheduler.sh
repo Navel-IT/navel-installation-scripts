@@ -114,7 +114,7 @@ _f_define() {
     }
 
     f_install_step_3() {
-        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base,logger,mojolicious-plugin-{json-xs,logger,swagger2-stdresponses},api,anyevent-{fork-rpc-serializer-sereal,pool},event,bcb,base-daemon} $program_name)
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},logger,api,base-daemon,mojolicious-plugin-{json-xs,logger,swagger2-stdresponses},anyevent-{fork-rpc-serializer-sereal,pool},definition-{collector,publisher},event,bcb} $program_name)
 
         f_pending "Installing ${cpanm_navel_gitchain}."
 
