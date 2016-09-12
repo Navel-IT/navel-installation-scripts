@@ -6,7 +6,4 @@
     definitions_from_file: /usr/local/etc/navel-scheduler/publishers.yml
     maximum: 0
   webservice:
-    credentials:
-      login: admin
-      password: password
     mojo_server: {}
