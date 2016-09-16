@@ -81,8 +81,6 @@ _f_define() {
     program_configuration_source_directory="${program_template_source_directory}/configuration/"
     program_configuration_destination_directory="${program_home_directory}"
 
-    program_configuration_destination_meta_file="${program_configuration_destination_directory}/meta.yml"
-
     program_service_source_directory="${program_template_source_directory}/service/"
 
     program_service_default_source_directory="${program_service_source_directory}/default/"
@@ -114,7 +112,7 @@ _f_define() {
     }
 
     f_install_step_3() {
-        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},logger,api,base-daemon,mojolicious-plugin-{json-xs,logger,swagger2-stdresponses},anyevent-{fork-rpc-serializer-sereal,pool},definition-{collector,publisher},event,bcb} $program_name)
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},logger,api,base-daemon,mojolicious-plugin-{logger,swagger2-stdresponses},anyevent-{fork-rpc-serializer-sereal,pool},definition-{collector,publisher},event,bcb} $program_name)
 
         f_pending "Installing ${cpanm_navel_gitchain}."
 
@@ -160,8 +158,7 @@ _f_define() {
 
         "${PERL}" -pi -e "s':PROGRAM_RUN_FILE:'${program_run_file}'g" "${program_service_default_destination_file}" && \
         "${PERL}" -pi -e "s':PROGRAM_RUN_DIR:'${program_run_directory}'g" "${program_service_default_destination_file}" && \
-        "${PERL}" -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}" && \
-        "${PERL}" -pi -e "s':PROGRAM_META_FILE:'${program_configuration_destination_meta_file}'g" "${program_service_default_destination_file}"
+        "${PERL}" -pi -e "s':PROGRAM_LOG_FILE:'${program_log_file}'g" "${program_service_default_destination_file}"
     }
 
     f_install_step_10() {
