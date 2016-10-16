@@ -43,20 +43,24 @@ supported_os=(
 
 # std
 
+f_log() {
+    "${ECHO}" -en "[$(date +%s)] ${@}\n"
+}
+
 f_pending() {
-    "${ECHO}" -en "[\033[34mPENDING\033[0m] ${@}\n"
+    f_log '[PENDING]' ${@}
 }
 
 f_ok() {
-    "${ECHO}" -en "[\033[32mOK\033[0m] ${@}\n"
+    f_log '[OK]' ${@}
 }
 
 f_warning() {
-    "${ECHO}" -en "[\033[33mWARNING\033[0m] ${@}\n"
+    f_log '[WARNING]' ${@}
 }
 
 f_fatal() {
-    "${ECHO}" -en "[\033[31mFATAL\033[0m] ${1}\n"
+    f_log '[FATAL]' ${@}
 
     exit $2
 }
