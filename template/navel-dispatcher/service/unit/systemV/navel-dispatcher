@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2015-2016 Yoann Le Garff, Nicolas Boquet and Yann Le Bras
+# :PROGRAM_NAME: is licensed under the Apache License, Version 2.0
+
+# chkconfig: - 98 02
+# description: :PROGRAM_NAME:
+
+### BEGIN INIT INFO
+# Provides: :PROGRAM_NAME:
+# Required-Start: $network
+# Required-Stop: $network
+# Should-Start:
+# Should-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description:
+# Description: :PROGRAM_NAME:
+### END INIT INFO
+
+#-> BEGIN
+
+#-> initialization
+
+. /etc/rc.d/init.d/functions
+
+ECHO='echo'
+MKDIR='mkdir'
+CHOWN='chown'
+
+prog=':PROGRAM_NAME:'
+
+prog_full_path=":PROGRAM_BINARY_BASEDIR:/${prog}"
+
+prog_user=':PROGRAM_USER:'
+prog_group=':PROGRAM_GROUP:'
+
+default=":PROGRAM_DEFAULT_DIR:/${prog}"
+
+rundir=':RUN_DIR:'
+pidfile="${rundir}/${prog}/${prog}.pid"
+
+[[ -r "${default}" ]] && . "${default}"
+
+#-> functions
+
+f_start() {
+    "${ECHO}" -n "Starting ${prog}: "
+
+    "${MKDIR}" -p "${rundir}"
+    "${CHOWN}" -R "${prog_user}:${prog_group}" "${rundir}"
+
+    daemon --user="${prog_user}" --pidfile="${pidfile}" "${prog_full_path}" --daemonize ${OPTS}
+
+    "${ECHO}"
+}
+
+f_stop() {
+    "${ECHO}" -n "Stopping ${prog}: "
+
+    killproc -p "${pidfile}" "${prog_full_path}"
+
+    "${ECHO}"
+}
+
+#-> main
+
+case "${1}" in
+    start)
+        f_start ;;
+    stop)
+        f_stop ;;
+    status)
+        status -p "${pidfile}" "${prog_full_path}" ;;
+    restart)
+        f_stop
+
+        f_start
+
+        ;;
+    *)
+        "${ECHO}" "Usage: ${0} {start|stop|restart|status}"
+
+        exit 1
+
+        ;;
+esac
+
+#-> END

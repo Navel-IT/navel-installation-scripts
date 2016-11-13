@@ -1,0 +1,17 @@
+[Unit]
+Description=:PROGRAM_NAME:
+After=network.target
+
+[Service]
+Type=forking
+User=:PROGRAM_USER:
+Group=:PROGRAM_GROUP:
+EnvironmentFile=:PROGRAM_DEFAULT_FILE:
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p ':RUN_DIR:'
+ExecStartPre=/bin/chown -R ':PROGRAM_USER:::PROGRAM_GROUP:' ':RUN_DIR:'
+ExecStart=:PROGRAM_BINARY_FILE: --daemonize $OPTS
+PIDFile=:PROGRAM_RUN_FILE:
+
+[Install]
+WantedBy=multi-user.target
