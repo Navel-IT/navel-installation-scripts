@@ -19,13 +19,18 @@ full_dirname=$("${READLINK}" -f ${dirname})
 
 program_name='navel-scheduler'
 
-# disabled steps
-
 disable_install_step[6]=1
 
 disable_install_step[15]=1
 disable_install_step[16]=1
 disable_install_step[17]=1
+
+supported_os=(
+    'rhel6'
+    'rhel7'
+    'debian7'
+    'debian8'
+)
 
 #-> functions
 
@@ -51,7 +56,7 @@ f_usage() {
 
 # define
 
-_f_define() {
+f_global_define() {
     # set
 
     mandatory_pkg_to_install_via_pkg_manager=(
@@ -223,8 +228,6 @@ _f_define() {
 }
 
 _f_define_for_rhel() {
-    _f_define
-
     # set
 
     YUM='yum'
@@ -240,8 +243,6 @@ _f_define_for_rhel() {
 }
 
 _f_define_for_debian() {
-    _f_define
-
     # set
 
     APT_GET='apt-get'
