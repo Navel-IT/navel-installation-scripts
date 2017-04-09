@@ -91,7 +91,7 @@ f_global_define() {
 
         "${FOXXMANAGER}" "${arangodb_environment_options[@]}" \
             --server.database="${arangodb_database}" \
-            upgrade "${arangodb_foxx_service_source_package_url}" "${arangodb_foxx_service_mount}"
+            replace "${arangodb_foxx_service_source_package_url}" "${arangodb_foxx_service_mount}"
     }
 }
 
