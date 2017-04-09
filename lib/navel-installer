@@ -101,9 +101,7 @@ f_start_install() {
                 if [[ $RETVAL -eq 0 ]] ; then
                     f_ok "f_install_step_${step_number} is done."
                 else
-                    f_fatal "f_install_step_${step_number} failed (RETVAL=$RETVAL)."
-
-                    f_fatal "The installation of ${program_name} cannot continue." $RETVAL
+                    f_fatal "f_install_step_${step_number} failed (RETVAL=$RETVAL). Cannot continue the installation." $RETVAL
                 fi
             fi
 
