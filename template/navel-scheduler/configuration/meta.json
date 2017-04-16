@@ -1,6 +1,0 @@
-{
-    "collectors": {
-        "definitions_from_file": "/usr/local/etc/navel-scheduler/collectors.json",
-        "maximum": 0
-    }
-}

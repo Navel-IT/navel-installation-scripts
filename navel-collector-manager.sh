@@ -17,7 +17,7 @@ full_dirname=$("${READLINK}" -f ${dirname})
 
 . "${full_dirname}/lib/navel-installer" || exit 1
 
-program_name='navel-scheduler'
+program_name='navel-collector-manager'
 
 disable_install_step[6]=1
 
@@ -69,8 +69,8 @@ f_global_define() {
     run_directory="/var/run/"
     log_directory="/var/log/"
 
-    program_user='navel-scheduler'
-    program_group='navel-scheduler'
+    program_user='navel-collector-manager'
+    program_group='navel-collector-manager'
 
     program_template_source_directory="${full_dirname}/template/${program_name}"
 

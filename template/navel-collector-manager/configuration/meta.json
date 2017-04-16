@@ -1,0 +1,6 @@
+{
+    "collectors": {
+        "definitions_from_file": "/usr/local/etc/navel-collector-manager/collectors.json",
+        "maximum": 0
+    }
+}

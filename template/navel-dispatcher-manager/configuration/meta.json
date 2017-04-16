@@ -1,0 +1,6 @@
+{
+    "dispatchers": {
+        "definitions_from_file": "/usr/local/etc/navel-dispatcher-manager/dispatchers.json",
+        "maximum": 0
+    }
+}

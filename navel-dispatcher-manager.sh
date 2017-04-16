@@ -17,7 +17,7 @@ full_dirname=$("${READLINK}" -f ${dirname})
 
 . "${full_dirname}/lib/navel-installer" || exit 1
 
-program_name='navel-dispatcher'
+program_name='navel-dispatcher-manager'
 
 disable_install_step[6]=1
 
@@ -69,8 +69,8 @@ f_global_define() {
     run_directory="/var/run/"
     log_directory="/var/log/"
 
-    program_user='navel-dispatcher'
-    program_group='navel-dispatcher'
+    program_user='navel-dispatcher-manager'
+    program_group='navel-dispatcher-manager'
 
     program_template_source_directory="${full_dirname}/template/${program_name}"
 
@@ -117,7 +117,7 @@ f_global_define() {
     }
 
     f_install_step_3() {
-        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},queue,logger,api} anyevent-fork-rpc-serializer-cpanel-json-xs navel-{base-{daemon,workermanager},mojolicious-plugin-{logger,openapi-stdresponses},anyevent-pool,definition-storekeeper,event,notification} $program_name)
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},queue,logger,api} anyevent-fork-rpc-serializer-cpanel-json-xs navel-{base-{daemon,workermanager},mojolicious-plugin-{logger,openapi-stdresponses},anyevent-pool,definition-dispatcher,event,notification} $program_name)
 
         f_pending "Installing ${cpanm_navel_gitchain}."
 

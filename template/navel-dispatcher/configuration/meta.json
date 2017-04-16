@@ -1,6 +1,0 @@
-{
-    "storekeepers": {
-        "definitions_from_file": "/usr/local/etc/navel-dispatcher/storekeepers.json",
-        "maximum": 0
-    }
-}
