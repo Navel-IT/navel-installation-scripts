@@ -7,8 +7,6 @@ Usage
 -----
 
 ```bash
-curl -L https://install.perlbrew.pl | bash
-
 git clone https://github.com/navel-it/navel-installation-scripts.git
 
 cd navel-installation-scripts/
