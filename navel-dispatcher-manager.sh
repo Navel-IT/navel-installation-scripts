@@ -117,7 +117,7 @@ f_global_define() {
     }
 
     f_install_step_3() {
-        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},queue,logger,api} anyevent-fork-rpc-serializer-cpanel-json-xs mojolicious-plugin-{logger,openapi-stdresponses} navel-{mojolicious-plugin-{logger,openapi-stdresponses},base-{daemon,workermanager},anyevent-pool,definition-dispatcher,event,notification} $program_name)
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base{,-definition},queue,logger,api} anyevent-fork-rpc-serializer-cpanel-json-xs mojolicious-plugin-{logger,openapi-stdresponses} navel-{mojolicious-plugin-{openapi-stdresponses,logger},base-{daemon,workermanager},anyevent-pool,definition-dispatcher,event,notification} $program_name)
 
         f_pending "Installing ${cpanm_navel_gitchain}."
 
