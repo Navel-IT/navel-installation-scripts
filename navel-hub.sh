@@ -64,6 +64,11 @@ f_global_define() {
         program_install_directory="/opt/${program_name}/"
     fi
 
+    program_user='navel-hub'
+    program_group='navel-hub'
+
+    program_home_directory="${program_install_directory}"
+
     # installation steps
 
     f_install_step_1() {
@@ -79,22 +84,78 @@ f_global_define() {
     }
 
     f_install_step_3() {
-        f_pending "Creating directory ${program_install_directory}."
+        local program_install_directory_dirname=$("${DIRNAME}" "${program_install_directory}")
 
-        w_mkdir "${program_install_directory}"
+        f_pending "Downloading ${source_package_url} in ${program_install_directory}."
+
+        [[ -d "${program_install_directory}" ]] && "${RM}" -r "${program_install_directory}"
+
+        "${CURL}" -L "${source_package_url}" | "${TAR}" xvzf - -C "${program_install_directory_dirname}" && "${MV}" "${program_install_directory_dirname}/${program_name}-${navel_git_remote_branch}" "${program_install_directory}"
     }
 
     f_install_step_4() {
-        f_pending "Downloading ${source_package_url} in ${program_install_directory}."
+        f_pending "Creating group ${program_group}."
 
-        "${CURL}" -L "${source_package_url}" | "${TAR}" xvzf - -C "${program_install_directory}" && "${MV}" "${program_name}-${navel_git_remote_branch}" $("${BASENAME}" "${program_install_directory}")
+        w_groupadd "${program_group}"
     }
 
     f_install_step_5() {
+        f_pending "Creating user ${program_user} with home directory ${program_home_directory}."
+
+        w_useradd "${program_user}" "${program_group}" "${program_home_directory}"
+    }
+
+    f_install_step_6() {
+        f_pending "Recursively chowning (${program_user}:${program_group}) ${program_install_directory}."
+
+        w_chown -R "${program_user}:${program_group}" "${program_install_directory}"
+    }
+
+    f_install_step_7() {
+        local cpanm_navel_gitchain=$(f_build_cpanm_navel_gitchain navel-{base,mojolicious-plugin-api-stdresponses,api})
+
         f_pending "Installing ${program_name} dependencies."
 
-        pushd "${program_install_directory}" && "${CPANM}" --installdeps . && popd
+        "${CPANM}" $cpanm_navel_gitchain && "${CPANM}" --installdeps "${program_install_directory}"
     }
+}
+
+_f_define_for_rhel() {
+    # set
+
+    YUM='yum'
+    CHKCONFIG='chkconfig'
+
+    mandatory_pkg_to_install_via_pkg_manager+=(
+        'libxml2-devel'
+    )
+}
+
+_f_define_for_debian() {
+    # set
+
+    APT_GET='apt-get'
+    UPDATE_RC_D='update-rc.d'
+
+    mandatory_pkg_to_install_via_pkg_manager+=(
+        'libxml2-dev'
+    )
+}
+
+f_define_for_rhel6() {
+    _f_define_for_rhel
+}
+
+f_define_for_rhel7() {
+    _f_define_for_rhel
+}
+
+f_define_for_debian7() {
+    _f_define_for_debian
+}
+
+f_define_for_debian8() {
+    _f_define_for_debian
 }
 
 #-> check opts
@@ -127,4 +188,3 @@ navel_git_remote_branch="${@: -1}"
 f_start_install
 
 #-> END
-

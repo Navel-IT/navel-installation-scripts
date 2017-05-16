@@ -8,6 +8,7 @@
 ECHO='echo'
 PRINTF='printf'
 GREP='grep'
+RM='rm'
 WHICH='which'
 CURL='curl'
 PERL='perl'
